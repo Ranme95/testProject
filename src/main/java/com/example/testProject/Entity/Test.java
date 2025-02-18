@@ -18,6 +18,9 @@ public class Test {
     private Long id;
 
     @Column
+    private String userId;
+
+    @Column
     private String uploadPath;
 
 

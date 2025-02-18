@@ -11,6 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResponseDto {
 
+    private Long id;
+
     private String image;
+
+    private String userId;
 
 }
