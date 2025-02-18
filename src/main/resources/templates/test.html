@@ -30,18 +30,14 @@
         let userId = document.getElementById("userId");
         let button = document.getElementById("button");
 
-
-
-        userId.addEventListener("focusout", () => {
+        button.addEventListener("click", () => {
             if (id_check.test(userId.value)) {
                 bol = 1;
             }
             else {
                 bol = 0;
             }
-        })
 
-        button.addEventListener("click", () => {
             if (bol === 1) {
                 button.type = "submit";
                 button.onclick;
