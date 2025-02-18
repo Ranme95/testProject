@@ -33,6 +33,7 @@ public class TestController {
     String home(Model model, @PathVariable Long id) {
         ResponseDto responseDto = testService.createHome(id);
         model.addAttribute("url", responseDto.getImage());
+        model.addAttribute("userId",responseDto.getUserId());
         model.addAttribute("id", id);
         return "home";
     }
