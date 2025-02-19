@@ -21,7 +21,7 @@ public class Test {
     private String userId;
 
     @JoinColumn
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private TestImage testImage;
 
     @Column

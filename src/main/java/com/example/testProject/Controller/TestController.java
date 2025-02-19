@@ -2,6 +2,7 @@ package com.example.testProject.Controller;
 
 import com.example.testProject.Entity.Test;
 import com.example.testProject.Service.TestService;
+import com.example.testProject.dto.DeleteDto;
 import com.example.testProject.dto.ResponseDto;
 import com.example.testProject.dto.TestDto;
 import com.example.testProject.dto.UpdateDto;
@@ -84,5 +85,11 @@ public class TestController {
          Test test =  testService.update(updateDto);
 
         return "redirect:/my-page/"+test.getId();
+    }
+
+    @PostMapping("delete")
+    String delete(DeleteDto deleteDto){
+        testService.delete(deleteDto);
+        return "redirect:/";
     }
 }

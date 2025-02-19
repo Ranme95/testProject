@@ -5,6 +5,7 @@ import com.example.testProject.Entity.TestImage;
 import com.example.testProject.Handler.ImageHandler;
 import com.example.testProject.Repository.TestImageRepository;
 import com.example.testProject.Repository.TestRepository;
+import com.example.testProject.dto.DeleteDto;
 import com.example.testProject.dto.ResponseDto;
 import com.example.testProject.dto.TestDto;
 import com.example.testProject.dto.UpdateDto;
@@ -124,6 +125,15 @@ public class TestService {
 
             return testRepository.save(savedTest);
         }
+    }
+
+    public void delete(DeleteDto deleteDto){
+        Optional<Test> optionalTest = testRepository.findById(deleteDto.getId());
+        if(optionalTest.isEmpty()) throw new RuntimeException("해당 유저를 찾을 수 없음");
+
+        Test test = optionalTest.get();
+
+        testRepository.delete(test);
     }
 
 }
