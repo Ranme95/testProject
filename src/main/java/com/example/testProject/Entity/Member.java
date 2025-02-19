@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Test {
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +22,7 @@ public class Test {
 
     @JoinColumn
     @OneToOne(cascade = CascadeType.ALL)
-    private TestImage testImage;
+    private MemberImage memberImage;
 
     @Column
     private String userPassword;

@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TestImage {
+public class MemberImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +21,7 @@ public class TestImage {
 
     @JoinColumn
     @ManyToOne(cascade = CascadeType.ALL)
-    private Test test;
+    private Member member;
 
     @Column
     private UUID uuid;

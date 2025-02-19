@@ -14,7 +14,7 @@
 </head>
 <body>
 <header th:replace="~{fragments/header::test_header}"></header>
-<a th:href="@{'/update/'+${id}}">수정하기</a>
+<a th:href="@{/update}">수정하기</a>
 <p th:text="${userId}"></p>
 
 <!--<a th:href="@{/update/(id=${id})}">수정하기</a>-->

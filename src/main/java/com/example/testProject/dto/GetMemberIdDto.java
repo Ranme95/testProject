@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-public class DeleteDto {
+public class GetMemberIdDto {
 
     private Long id;
 }

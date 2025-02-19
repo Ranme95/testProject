@@ -1,11 +1,11 @@
 package com.example.testProject.Controller;
 
-import com.example.testProject.Entity.Test;
-import com.example.testProject.Service.TestService;
-import com.example.testProject.dto.DeleteDto;
+import com.example.testProject.Entity.Member;
+import com.example.testProject.Service.MemberService;
+import com.example.testProject.dto.GetMemberIdDto;
 import com.example.testProject.dto.ResponseDto;
-import com.example.testProject.dto.TestDto;
-import com.example.testProject.dto.UpdateDto;
+import com.example.testProject.dto.MemberJoinDto;
+import com.example.testProject.dto.MemberUpdateDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -20,9 +20,9 @@ import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
-public class TestController {
+public class MemberController {
 
-    private final TestService testService;
+    private final MemberService memberService;
 
     @GetMapping("/")
     String homePage(){
@@ -36,45 +36,48 @@ public class TestController {
 
     @GetMapping("/my-page/{id}")
     String home(Model model, @PathVariable Long id) {
-        ResponseDto responseDto = testService.createHome(id);
+        ResponseDto responseDto = memberService.initMyPage(id);
+
         model.addAttribute("url", responseDto.getImage());
         model.addAttribute("userId",responseDto.getUserId());
         model.addAttribute("id", id);
+
         return "my-page";
     }
 
     @PostMapping("/join")
-    String test(@Valid TestDto testDto, Errors errors, Model model) throws IOException {
-
+    String test(@Valid MemberJoinDto memberJoinDto, Errors errors, Model model) throws IOException {
         if (errors.hasErrors()) {
-            model.addAttribute("id", testDto.getUserId());
-            model.addAttribute("password",testDto.getUserPassword());
-            Map<String, String> validatorResult = testService.validateHandling(errors);
+            model.addAttribute("id", memberJoinDto.getUserId());
+            model.addAttribute("password", memberJoinDto.getUserPassword());
+
+            Map<String, String> validatorResult = memberService.validateHandling(errors);
 
             for (String key : validatorResult.keySet()) {
                 model.addAttribute(key, validatorResult.get(key));
             }
+
             return "join";
         }
 
-        Test test = testService.saveTest(testDto);
+        Member member = memberService.saveMember(memberJoinDto);
 
-        return "redirect:/my-page/" + test.getId();
+        return "redirect:/my-page/" + member.getId();
     }
 
-    @GetMapping("/update/{id}")
-    String createUpdatePage(@PathVariable Long id, Model model) {
-        ResponseDto responseDto = testService.createHome(id);
+    @GetMapping("/update")
+    String createUpdatePage(GetMemberIdDto getMemberIdDto, Model model) {
+        ResponseDto responseDto = memberService.initMyPage(getMemberIdDto.getId());
         model.addAttribute("userId", responseDto.getUserId());
         model.addAttribute("id",responseDto.getId());
         return "update";
     }
 
     @PostMapping("/update")
-    String createUpdate(@Valid UpdateDto updateDto, Errors errors, Model model) throws IOException{
+    String createUpdate(@Valid MemberUpdateDto memberUpdateDto, Errors errors, Model model) throws IOException{
         if (errors.hasErrors()) {
-            model.addAttribute("id", updateDto.getUserId());
-            Map<String, String> validatorResult = testService.validateHandling(errors);
+            model.addAttribute("id", memberUpdateDto.getUserId());
+            Map<String, String> validatorResult = memberService.validateHandling(errors);
 
             for (String key : validatorResult.keySet()) {
                 model.addAttribute(key, validatorResult.get(key));
@@ -82,14 +85,14 @@ public class TestController {
             return "join";
         }
 
-         Test test =  testService.update(updateDto);
+         Member member =  memberService.updateMember(memberUpdateDto);
 
-        return "redirect:/my-page/"+test.getId();
+        return "redirect:/my-page/"+ member.getId();
     }
 
     @PostMapping("delete")
-    String delete(DeleteDto deleteDto){
-        testService.delete(deleteDto);
+    String delete(GetMemberIdDto getMemberIdDto){
+        memberService.deleteMember(getMemberIdDto);
         return "redirect:/";
     }
 }

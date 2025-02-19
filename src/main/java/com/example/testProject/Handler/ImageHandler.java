@@ -1,7 +1,6 @@
 package com.example.testProject.Handler;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +19,7 @@ public class ImageHandler {
     @Value("${image.path.directory}")
     private String imagePathDirectory;
 
-    public UUID save(MultipartFile image) throws IOException {
+    public UUID saveImage(MultipartFile image) throws IOException {
         //UUID 생성
         UUID uuid = UUID.randomUUID();
 
