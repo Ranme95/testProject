@@ -15,15 +15,30 @@
 </head>
 
 <body>
-    <div class="container w-50 m-4">
-        <form th:action="@{/update}" th:method="post" enctype="multipart/form-data">
-            <input type="hidden" name="id" th:value="${id}">
-            <input class="form-control" type="text" name="userId" id="userId" th:value="${userId}" required>
-            <span class="error" th:text="${valid_userId}"></span>
-            <input class="form-control" type="file" name="updateImage">
-            <span class="error" th:text="${valid_image}"></span>
-            <button class="btn btn-success" type="button" id="button">제출</button>
-        </form>
+    <div class="container mt-5">
+        <div class="container w-50">
+            <form th:action="@{/update}" th:method="post" enctype="multipart/form-data">
+                <input type="hidden" name="id" th:value="${id}">
+                <div class="mb-3 row">
+                    <label for="userId" class="col-sm-2 col-form-label">아이디</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="userId" name="userId" th:value="${userId}" required>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <span class="error" th:text="${valid_userId}"></span>
+                </div>
+                <div class="mb-3 row">
+                    <input class="form-control m-2" type="file" name="updateImage">
+                </div>
+                <div class="mb-3 row">
+                    <span class="error" th:text="${valid_image}"></span>
+                </div>
+                <div class="mb-3 row">
+                <button class="btn btn-success m-2" type="button" id="button">제출</button>
+                </div>
+            </form>
+        </div>
     </div>
     <script>
         let bol = 0;
