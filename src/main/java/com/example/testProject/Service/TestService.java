@@ -7,6 +7,7 @@ import com.example.testProject.dto.ResponseDto;
 import com.example.testProject.dto.TestDto;
 import com.example.testProject.dto.UpdateDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
@@ -19,6 +20,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class TestService {
+    @Value("${image.path.directory}")
+    private String imagePathDirectory;
+
     private final TestRepository testRepository;
 
     ImageHandler imageHandler = new ImageHandler();
@@ -42,7 +46,7 @@ public class TestService {
             return ResponseDto.builder()
                     .id(id)
                     .userId(test.getUserId())
-                    .image("/product-images/" + test.getUploadPath())
+                    .image(imagePathDirectory+ test.getUploadPath())
                     .build();
         }).orElseThrow(() -> new RuntimeException("찾을 수 없음"));
     }
