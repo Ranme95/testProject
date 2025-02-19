@@ -24,5 +24,10 @@ public class TestDto {
     @ValidFile(message = "이미지는 필수입니다.")
     private MultipartFile image;
 
+    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$"
+    ,message = "비밀번호는 영대소문자, 숫자, 특수문자조합으로 8~15자리여야합니다.")
+    @NotBlank(message = "비밀번호는 필수 정보입니다.")
+    private String userPassword;
+
 
 }

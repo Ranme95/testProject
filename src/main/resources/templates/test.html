@@ -22,13 +22,16 @@
 <body>
     <div class="container mt-5">
         <div class="container" style="width: 720px;">
-            <form th:action="@{/update}" th:method="post" enctype="multipart/form-data">
+            <form th:action="@{/create}" th:method="post" enctype="multipart/form-data">
                 <input type="hidden" name="id" th:value="${id}">
                 <div class="mb-3 row">
                     <label for="userId" class="col-sm-2 col-form-label">아이디</label>
                     <div class="col">
                         <input type="text" class="form-control" id="userId" name="userId" th:value="${userId}" required>
                     </div>
+                </div>
+                <div class="mb-3 row">
+                    <span class="error" th:text="${valid_userId}"></span>
                 </div>
                 <div class="mb-3 row">
                     <label for="userPassword" class="col-sm-2 col-form-label">비밀번호</label>
@@ -44,7 +47,7 @@
                     <span class="error" style="display: none;" id="passwordError">비밀번호가 일치하지 않습니다.</span>
                 </div>
                 <div class="mb-3 row">
-                    <span class="error" th:text="${valid_userId}"></span>
+                    <span class="error" th:text="${valid_userPassword}"></span>
                 </div>
                 <div class="mb-3 row">
                     <input class="form-control m-2" type="file" name="image">

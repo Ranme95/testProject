@@ -43,6 +43,7 @@ public class TestController {
 
         if (errors.hasErrors()) {
             model.addAttribute("id", testDto.getUserId());
+            model.addAttribute("password",testDto.getUserPassword());
             Map<String, String> validatorResult = testService.validateHandling(errors);
 
             for (String key : validatorResult.keySet()) {

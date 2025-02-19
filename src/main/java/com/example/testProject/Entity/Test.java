@@ -23,5 +23,8 @@ public class Test {
     @Column
     private String uploadPath;
 
+    @Column
+    private String userPassword;
+
 
 }

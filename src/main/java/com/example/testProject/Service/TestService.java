@@ -28,9 +28,10 @@ public class TestService {
         String imageFileName = imageHandler.save(testDto.getImage());
 
         Test test = Test.builder()
-                        .userId(testDto.getUserId())
-                        .uploadPath(imageFileName)
-                        .build();
+                .userId(testDto.getUserId())
+                .uploadPath(imageFileName)
+                .userPassword(testDto.getUserPassword())
+                .build();
 
         return testRepository.save(test);
 
@@ -39,10 +40,10 @@ public class TestService {
     public ResponseDto createHome(Long id) {
         return testRepository.findById(id).map(test -> {
             return ResponseDto.builder()
-                              .id(id)
-                              .userId(test.getUserId())
-                              .image("/product-images/" + test.getUploadPath())
-                              .build();
+                    .id(id)
+                    .userId(test.getUserId())
+                    .image("/product-images/" + test.getUploadPath())
+                    .build();
         }).orElseThrow(() -> new RuntimeException("찾을 수 없음"));
     }
 
@@ -64,18 +65,20 @@ public class TestService {
 
         if (updateDto.getUpdateImage().isEmpty()) {
             Test savedTest = Test.builder()
-                                 .id(updateDto.getId())
-                                 .uploadPath(test.getUploadPath())
-                                 .userId(updateDto.getUserId())
-                                 .build();
+                    .id(updateDto.getId())
+                    .uploadPath(test.getUploadPath())
+                    .userId(updateDto.getUserId())
+                    .userPassword(test.getUserPassword())
+                    .build();
             return testRepository.save(savedTest);
         } else {
             String imageFileName = imageHandler.save(updateDto.getUpdateImage());
             Test savedTest = Test.builder()
-                                 .id(updateDto.getId())
-                                 .userId(updateDto.getUserId())
-                                 .uploadPath(imageFileName)
-                                 .build();
+                    .id(updateDto.getId())
+                    .userId(updateDto.getUserId())
+                    .uploadPath(imageFileName)
+                    .userPassword(test.getUserPassword())
+                    .build();
             return testRepository.save(savedTest);
         }
     }
