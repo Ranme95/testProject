@@ -23,7 +23,7 @@
 <header th:replace="~{fragments/header::test_header}"></header>
 <div class="container mt-5">
     <div class="container" style="width: 720px;">
-        <form th:action="@{/create}" th:method="post" enctype="multipart/form-data">
+        <form th:action="@{/join}" th:method="post" enctype="multipart/form-data">
             <input type="hidden" name="id" th:value="${id}">
             <div class="mb-3 row">
                 <label for="userId" class="col-sm-2 col-form-label">아이디</label>

@@ -29,9 +29,9 @@ public class TestController {
         return "home";
     }
 
-    @GetMapping("/test")
+    @GetMapping("/join")
     String testPage() {
-        return "test";
+        return "join";
     }
 
     @GetMapping("/my-page/{id}")
@@ -43,7 +43,7 @@ public class TestController {
         return "my-page";
     }
 
-    @PostMapping("/create")
+    @PostMapping("/join")
     String test(@Valid TestDto testDto, Errors errors, Model model) throws IOException {
 
         if (errors.hasErrors()) {
@@ -54,7 +54,7 @@ public class TestController {
             for (String key : validatorResult.keySet()) {
                 model.addAttribute(key, validatorResult.get(key));
             }
-            return "test";
+            return "join";
         }
 
         Test test = testService.saveTest(testDto);
@@ -79,7 +79,7 @@ public class TestController {
             for (String key : validatorResult.keySet()) {
                 model.addAttribute(key, validatorResult.get(key));
             }
-            return "test";
+            return "join";
         }
 
          Test test =  testService.update(updateDto);
