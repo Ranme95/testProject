@@ -6,26 +6,27 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Test {
+public class TestImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private String userId;
-
     @JoinColumn
-    @OneToOne
-    private TestImage testImage;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Test test;
 
     @Column
-    private String userPassword;
+    private UUID uuid;
 
+    @Column
+    private String imageName;
 
 }

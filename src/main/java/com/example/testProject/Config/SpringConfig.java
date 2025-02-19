@@ -15,12 +15,11 @@ public class SpringConfig implements WebMvcConfigurer {
     @Value("${image.path.directory}")
     private String imagePathDirectory;
 
-
     /**
      * 이미지 경로 외부로 설정
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry){
-        registry.addResourceHandler(imagePathDirectory+"**").addResourceLocations(imagePath);
+        registry.addResourceHandler(imagePathDirectory+"**").addResourceLocations("file:///"+imagePath);
     }
 }

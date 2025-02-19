@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -52,7 +51,7 @@ public class TestController {
             return "test";
         }
 
-        Test test = testService.doIt(testDto);
+        Test test = testService.saveTest(testDto);
 
         return "redirect:/home/" + test.getId();
     }
