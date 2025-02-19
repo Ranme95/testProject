@@ -23,18 +23,23 @@ public class TestController {
 
     private final TestService testService;
 
+    @GetMapping("/")
+    String homePage(){
+        return "home";
+    }
+
     @GetMapping("/test")
     String testPage() {
         return "test";
     }
 
-    @GetMapping("/home/{id}")
+    @GetMapping("/my-page/{id}")
     String home(Model model, @PathVariable Long id) {
         ResponseDto responseDto = testService.createHome(id);
         model.addAttribute("url", responseDto.getImage());
         model.addAttribute("userId",responseDto.getUserId());
         model.addAttribute("id", id);
-        return "home";
+        return "my-page";
     }
 
     @PostMapping("/create")
@@ -53,7 +58,7 @@ public class TestController {
 
         Test test = testService.saveTest(testDto);
 
-        return "redirect:/home/" + test.getId();
+        return "redirect:/my-page/" + test.getId();
     }
 
     @GetMapping("/update/{id}")
@@ -64,7 +69,7 @@ public class TestController {
         return "update";
     }
 
-    @PostMapping("update")
+    @PostMapping("/update")
     String createUpdate(@Valid UpdateDto updateDto, Errors errors, Model model) throws IOException{
         if (errors.hasErrors()) {
             model.addAttribute("id", updateDto.getUserId());
@@ -78,6 +83,6 @@ public class TestController {
 
          Test test =  testService.update(updateDto);
 
-        return "redirect:/home/"+test.getId();
+        return "redirect:/my-page/"+test.getId();
     }
 }
