@@ -73,6 +73,7 @@ public class MemberController {
         return "update";
     }
 
+
     @PostMapping("/update")
     String createUpdate(@Valid MemberUpdateDto memberUpdateDto, Errors errors, Model model) throws IOException{
         if (errors.hasErrors()) {
