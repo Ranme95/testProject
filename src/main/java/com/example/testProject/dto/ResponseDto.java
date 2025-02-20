@@ -17,4 +17,6 @@ public class ResponseDto {
 
     private String userId;
 
+    private String userPassword;
+
 }
