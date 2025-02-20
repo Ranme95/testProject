@@ -103,28 +103,23 @@ public class MemberService {
         if (memberUpdateDto.getUpdateImage().isEmpty()) {
             Member savedMember = Member.builder()
                     .id(memberUpdateDto.getId())
+                    .memberImage(memberImage)
                     .userId(memberUpdateDto.getUserId())
                     .userPassword(member.getUserPassword())
                     .build();
 
-            MemberImage savedMemberImage = MemberImage.builder()
-                    .id(memberImage.getId())
-                    .uuid(memberImage.getUuid())
-                    .member(savedMember)
-                    .imageName(memberImage.getImageName())
-                    .build();
-
-            savedMember.setMemberImage(savedMemberImage);
-
             return memberRepository.save(savedMember);
 
         } else {
+
             UUID uuid = imageHandler.saveImage(memberUpdateDto.getUpdateImage());
+
             Member savedMember = Member.builder()
                     .id(memberUpdateDto.getId())
                     .userId(memberUpdateDto.getUserId())
                     .userPassword(member.getUserPassword())
                     .build();
+
             MemberImage savedMemberImage = MemberImage.builder()
                     .id(memberImage.getId())
                     .uuid(uuid)
