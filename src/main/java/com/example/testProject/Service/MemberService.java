@@ -32,6 +32,15 @@ public class MemberService {
 
     private final ImageHandler imageHandler;
 
+    /**
+     * 아이디 중복 체크
+     * @return 존재하면 false, 존재하지 않으면 true
+     */
+    public boolean checkId(String userId){
+        Optional<Member> optionalMember = memberRepository.findByUserId(userId);
+        return optionalMember.isEmpty();
+    }
+
     public Member saveMember(MemberJoinDto memberJoinDto) throws IOException {
 
         UUID uuid = imageHandler.saveImage(memberJoinDto.getImage());
@@ -46,11 +55,10 @@ public class MemberService {
                 .uuid(uuid)
                 .imageName(memberJoinDto.getImage().getOriginalFilename())
                 .build();
-
+        
         member.setMemberImage(memberImage);
-
-        memberImageRepository.save(memberImage);
-
+        
+        //cascade.ALL 설정이 되어있기때문에 memberImageRepository.save를 해주지 않아도 자동으로 저장됨
         return memberRepository.save(member);
 
     }
@@ -67,6 +75,10 @@ public class MemberService {
         }).orElseThrow(() -> new RuntimeException("찾을 수 없음"));
     }
 
+    /**
+     * 오류가 발생한 필드와, 그 필드 오류 메세지를 출력하기 위해 리스트에 추가
+     * @return
+     */
     public Map<String, String> validateHandling(Errors errors) {
         Map<String, String> validatorResult = new HashMap<>();
 
@@ -103,7 +115,6 @@ public class MemberService {
                     .build();
 
             savedMember.setMemberImage(savedMemberImage);
-            memberImageRepository.save(savedMemberImage);
 
             return memberRepository.save(savedMember);
 
@@ -121,7 +132,6 @@ public class MemberService {
                     .imageName(memberUpdateDto.getUpdateImage().getOriginalFilename())
                     .build();
             savedMember.setMemberImage(savedMemberImage);
-            memberImageRepository.save(savedMemberImage);
 
             return memberRepository.save(savedMember);
         }
