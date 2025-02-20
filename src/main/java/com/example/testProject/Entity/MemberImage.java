@@ -20,7 +20,7 @@ public class MemberImage {
     private Long id;
 
     @JoinColumn
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Member member;
 
     @Column

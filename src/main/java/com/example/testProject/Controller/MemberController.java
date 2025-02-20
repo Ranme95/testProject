@@ -73,6 +73,7 @@ public class MemberController {
         return "update";
     }
 
+
     @PostMapping("/update")
     String createUpdate(@Valid MemberUpdateDto memberUpdateDto, Errors errors, Model model) throws IOException{
         if (errors.hasErrors()) {
@@ -90,7 +91,7 @@ public class MemberController {
         return "redirect:/my-page/"+ member.getId();
     }
 
-    @PostMapping("delete")
+    @PostMapping("/delete")
     String delete(GetMemberIdDto getMemberIdDto){
         memberService.deleteMember(getMemberIdDto);
         return "redirect:/";
