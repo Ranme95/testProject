@@ -14,6 +14,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/")
-    String homePage(){
+    String homePage() {
         return "home";
     }
 
@@ -39,7 +40,7 @@ public class MemberController {
         ResponseDto responseDto = memberService.initMyPage(id);
 
         model.addAttribute("url", responseDto.getImage());
-        model.addAttribute("userId",responseDto.getUserId());
+        model.addAttribute("userId", responseDto.getUserId());
         model.addAttribute("id", id);
 
         return "my-page";
@@ -47,9 +48,15 @@ public class MemberController {
 
     @PostMapping("/join")
     String test(@Valid MemberJoinDto memberJoinDto, Errors errors, Model model) throws IOException {
+        model.addAttribute("userId", memberJoinDto.getUserId());
+        //아이디가 중복되었을 때
+        if (!memberService.checkId(memberJoinDto.getUserId())) {
+
+            model.addAttribute("duplicateId", "중복된 아이디입니다.");
+            return "join";
+        }
+
         if (errors.hasErrors()) {
-            model.addAttribute("id", memberJoinDto.getUserId());
-            model.addAttribute("password", memberJoinDto.getUserPassword());
 
             Map<String, String> validatorResult = memberService.validateHandling(errors);
 
@@ -65,19 +72,19 @@ public class MemberController {
         return "redirect:/my-page/" + member.getId();
     }
 
-    @GetMapping("/update")
-    String createUpdatePage(GetMemberIdDto getMemberIdDto, Model model) {
-        ResponseDto responseDto = memberService.initMyPage(getMemberIdDto.getId());
+    @GetMapping("/update/{id}")
+    String createUpdatePage(@PathVariable Long id, Model model) {
+        ResponseDto responseDto = memberService.initMyPage(id);
+        model.addAttribute("id", responseDto.getId());
         model.addAttribute("userId", responseDto.getUserId());
-        model.addAttribute("id",responseDto.getId());
         return "update";
     }
 
 
     @PostMapping("/update")
-    String createUpdate(@Valid MemberUpdateDto memberUpdateDto, Errors errors, Model model) throws IOException{
+    String createUpdate(@Valid MemberUpdateDto memberUpdateDto, Errors errors, Model model) throws IOException {
         if (errors.hasErrors()) {
-            model.addAttribute("id", memberUpdateDto.getUserId());
+            model.addAttribute("userId", memberUpdateDto.getUserId());
             Map<String, String> validatorResult = memberService.validateHandling(errors);
 
             for (String key : validatorResult.keySet()) {
@@ -86,13 +93,13 @@ public class MemberController {
             return "join";
         }
 
-         Member member =  memberService.updateMember(memberUpdateDto);
+        memberService.updateMember(memberUpdateDto);
 
-        return "redirect:/my-page/"+ member.getId();
+        return "redirect:/my-page/" + memberUpdateDto.getId();
     }
 
     @PostMapping("/delete")
-    String delete(GetMemberIdDto getMemberIdDto){
+    String delete(GetMemberIdDto getMemberIdDto) {
         memberService.deleteMember(getMemberIdDto);
         return "redirect:/";
     }
