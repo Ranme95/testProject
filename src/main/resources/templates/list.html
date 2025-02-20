@@ -32,7 +32,7 @@
     </tr>
     </tbody>
 </table>
-
+<div class="justify-content-center d-flex">
 <nav aria-label="Page navigation example" th:if="${!memberInfo.isEmpty()}">
     <ul class="pagination">
         <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
@@ -50,6 +50,7 @@
         </li>
     </ul>
 </nav>
+</div>
 
 
 <footer th:replace="~{fragments/footer::test_footer}"></footer>
