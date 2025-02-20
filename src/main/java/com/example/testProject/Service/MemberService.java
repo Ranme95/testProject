@@ -12,6 +12,7 @@ import com.example.testProject.dto.MemberUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
@@ -31,6 +32,8 @@ public class MemberService {
 
     private final ImageHandler imageHandler;
 
+    private final PasswordEncoder passwordEncoder;
+
     /**
      * 아이디 중복 체크
      * @return 존재하면 false, 존재하지 않으면 true
@@ -43,10 +46,13 @@ public class MemberService {
     public Member saveMember(MemberJoinDto memberJoinDto) throws IOException {
 
         UUID uuid = imageHandler.saveImage(memberJoinDto.getImage());
+        
+        //비밀번호 암호화
+        String password = passwordEncoder.encode(memberJoinDto.getUserPassword());
 
         Member member = Member.builder()
                 .userId(memberJoinDto.getUserId())
-                .userPassword(memberJoinDto.getUserPassword())
+                .userPassword(password)
                 .build();
 
         MemberImage memberImage = MemberImage.builder()
@@ -99,12 +105,14 @@ public class MemberService {
 
         MemberImage memberImage = optionalTestImage.get();
 
+        String password = passwordEncoder.encode(member.getUserPassword());
+
         if (memberUpdateDto.getUpdateImage().isEmpty()) {
             Member savedMember = Member.builder()
                     .id(memberUpdateDto.getId())
                     .memberImage(memberImage)
                     .userId(memberUpdateDto.getUserId())
-                    .userPassword(member.getUserPassword())
+                    .userPassword(password)
                     .build();
 
             return memberRepository.save(savedMember);
@@ -116,7 +124,7 @@ public class MemberService {
             Member savedMember = Member.builder()
                     .id(memberUpdateDto.getId())
                     .userId(memberUpdateDto.getUserId())
-                    .userPassword(member.getUserPassword())
+                    .userPassword(password)
                     .build();
 
             MemberImage savedMemberImage = MemberImage.builder()
