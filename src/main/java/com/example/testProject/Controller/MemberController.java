@@ -91,7 +91,7 @@ public class MemberController {
         return "redirect:/my-page/"+ member.getId();
     }
 
-    @PostMapping("delete")
+    @PostMapping("/delete")
     String delete(GetMemberIdDto getMemberIdDto){
         memberService.deleteMember(getMemberIdDto);
         return "redirect:/";
