@@ -10,16 +10,15 @@ import com.example.testProject.dto.ResponseDto;
 import com.example.testProject.dto.MemberJoinDto;
 import com.example.testProject.dto.MemberUpdateDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -141,4 +140,15 @@ public class MemberService {
         memberRepository.delete(member);
     }
 
+    public Page<ResponseDto> getMemberList(Pageable pageable){
+         Page<Member> memberList = memberRepository.findAll(pageable);
+        return memberList.map((member)->{
+            return ResponseDto.builder()
+                    .id(member.getId())
+                    .userId(member.getUserId())
+                    .userPassword(member.getUserPassword())
+                    .image(imageHandler.getImagePath(member.getMemberImage().getUuid(), member.getMemberImage().getImageName()))
+                    .build();
+        });
+    }
 }
