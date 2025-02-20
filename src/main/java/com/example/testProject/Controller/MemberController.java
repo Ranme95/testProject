@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -102,5 +103,14 @@ public class MemberController {
     String delete(GetMemberIdDto getMemberIdDto) {
         memberService.deleteMember(getMemberIdDto);
         return "redirect:/";
+    }
+
+    @GetMapping("/member/list")
+    String memberListPage(Model model){
+        List<ResponseDto> responseDtoList=   memberService.getMemberList();
+
+        model.addAttribute("memberInfo",responseDtoList);
+
+        return "list";
     }
 }

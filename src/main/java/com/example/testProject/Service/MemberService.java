@@ -16,10 +16,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -141,4 +138,21 @@ public class MemberService {
         memberRepository.delete(member);
     }
 
+    public List<ResponseDto> getMemberList(){
+         List<Member> memberList = memberRepository.findAll();
+        List<ResponseDto> responseDtoList = new ArrayList<>();
+
+         for(Member member : memberList){
+             ResponseDto responseDto = ResponseDto.builder()
+                     .id(member.getId())
+                     .userId(member.getUserId())
+                     .userPassword(member.getUserPassword())
+                     .image(imageHandler.getImagePath(member.getMemberImage().getUuid(), member.getMemberImage().getImageName()))
+                     .build();
+
+             responseDtoList.add(responseDto);
+         }
+
+         return responseDtoList;
+    }
 }
