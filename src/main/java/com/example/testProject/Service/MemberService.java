@@ -10,6 +10,8 @@ import com.example.testProject.dto.ResponseDto;
 import com.example.testProject.dto.MemberJoinDto;
 import com.example.testProject.dto.MemberUpdateDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
@@ -138,21 +140,15 @@ public class MemberService {
         memberRepository.delete(member);
     }
 
-    public List<ResponseDto> getMemberList(){
-         List<Member> memberList = memberRepository.findAll();
-        List<ResponseDto> responseDtoList = new ArrayList<>();
-
-         for(Member member : memberList){
-             ResponseDto responseDto = ResponseDto.builder()
-                     .id(member.getId())
-                     .userId(member.getUserId())
-                     .userPassword(member.getUserPassword())
-                     .image(imageHandler.getImagePath(member.getMemberImage().getUuid(), member.getMemberImage().getImageName()))
-                     .build();
-
-             responseDtoList.add(responseDto);
-         }
-
-         return responseDtoList;
+    public Page<ResponseDto> getMemberList(Pageable pageable){
+         Page<Member> memberList = memberRepository.findAll(pageable);
+        return memberList.map((member)->{
+            return ResponseDto.builder()
+                    .id(member.getId())
+                    .userId(member.getUserId())
+                    .userPassword(member.getUserPassword())
+                    .image(imageHandler.getImagePath(member.getMemberImage().getUuid(), member.getMemberImage().getImageName()))
+                    .build();
+        });
     }
 }
