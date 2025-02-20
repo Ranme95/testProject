@@ -3,21 +3,22 @@ package com.example.testProject.Controller;
 import com.example.testProject.Entity.Member;
 import com.example.testProject.Service.MemberService;
 import com.example.testProject.dto.GetMemberIdDto;
-import com.example.testProject.dto.ResponseDto;
 import com.example.testProject.dto.MemberJoinDto;
 import com.example.testProject.dto.MemberUpdateDto;
+import com.example.testProject.dto.ResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -106,10 +107,10 @@ public class MemberController {
     }
 
     @GetMapping("/member/list")
-    String memberListPage(Model model){
-        List<ResponseDto> responseDtoList=   memberService.getMemberList();
-
-        model.addAttribute("memberInfo",responseDtoList);
+    String memberListPage(Model model, @PageableDefault(size=2,page=0)Pageable pageable){
+        Page<ResponseDto> responseDtoList=   memberService.getMemberList(pageable);
+        model.addAttribute("memberInfo",responseDtoList.getContent());
+        model.addAttribute("paging",responseDtoList);
 
         return "list";
     }
