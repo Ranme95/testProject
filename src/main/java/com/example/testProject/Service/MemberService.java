@@ -1,17 +1,16 @@
 package com.example.testProject.Service;
 
+import com.example.testProject.Common.MemberRole;
 import com.example.testProject.Entity.Member;
 import com.example.testProject.Entity.MemberImage;
 import com.example.testProject.Handler.ImageHandler;
-import com.example.testProject.OAuth2.CustomOauth2UserDetails;
 import com.example.testProject.Repository.MemberImageRepository;
 import com.example.testProject.Repository.MemberRepository;
 import com.example.testProject.dto.*;
-import jakarta.security.auth.message.callback.SecretKeyCallback;
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Request;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +20,10 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +58,7 @@ public class MemberService {
         Member member = Member.builder()
                 .userId(memberJoinDto.getUserId())
                 .userPassword(password)
+                .role(MemberRole.USER)
                 .build();
 
         MemberImage memberImage = MemberImage.builder()
@@ -98,41 +101,29 @@ public class MemberService {
 
         MemberImage memberImage = optionalTestImage.get();
 
-        String password = "";
+        String password = null;
 
-        if(member.getUserPassword() !=null){
+        if (member.getUserPassword() != null) {
             password = passwordEncoder.encode(member.getUserPassword());
-
         }
-        if (memberUpdateDto.getUpdateImage().isEmpty()) {
-            Member savedMember = Member.builder()
-                    .id(memberUpdateDto.getId())
-                    .memberImage(memberImage)
-                    .userId(member.getUserId())
-                    .userPassword(password)
-                    .build();
 
-            return memberRepository.save(savedMember);
+        if (memberUpdateDto.getUpdateImage().isEmpty()) {
+            return member;
 
         } else {
 
             UUID uuid = imageHandler.saveImage(memberUpdateDto.getUpdateImage());
 
-            Member savedMember = Member.builder()
-                    .id(memberUpdateDto.getId())
-                    .userId(member.getUserId())
-                    .userPassword(password)
-                    .build();
-
             MemberImage savedMemberImage = MemberImage.builder()
                     .id(memberImage.getId())
                     .uuid(uuid)
-                    .member(savedMember)
+                    .member(member)
                     .imageName(memberUpdateDto.getUpdateImage().getOriginalFilename())
                     .build();
-            savedMember.setMemberImage(savedMemberImage);
 
-            return memberRepository.save(savedMember);
+            member.setMemberImage(savedMemberImage);
+
+            return memberRepository.save(member);
         }
     }
 
@@ -189,7 +180,7 @@ public class MemberService {
         if (optionalMember.isEmpty()) return null;
         Member member = optionalMember.get();
 
-        String imagePath ="";
+        String imagePath = "";
         if (member.getMemberImage() != null) {
             imagePath = imageHandler.getImagePath(member.getMemberImage().getUuid(), member.getMemberImage().getImageName());
         }

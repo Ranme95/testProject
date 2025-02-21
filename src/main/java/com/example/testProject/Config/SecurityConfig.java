@@ -20,9 +20,9 @@ public class SecurityConfig {
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         //접근 권한 설정
-        http.authorizeHttpRequests((auth) -> auth.requestMatchers("/oauth-login/admin")
-                .hasRole(MemberRole.ADMIN.name())
-                .requestMatchers("/oauth-login.info").authenticated().anyRequest().permitAll());
+        //어떤 요청이든 접근 가능
+        http.authorizeHttpRequests((auth)->auth.anyRequest().permitAll()
+        );
 
 
         http.oauth2Login((auth) -> auth.loginPage("/oauth/login")
