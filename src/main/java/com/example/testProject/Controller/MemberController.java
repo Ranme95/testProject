@@ -2,10 +2,9 @@ package com.example.testProject.Controller;
 
 import com.example.testProject.Entity.Member;
 import com.example.testProject.Service.MemberService;
-import com.example.testProject.dto.GetMemberIdDto;
-import com.example.testProject.dto.MemberJoinDto;
-import com.example.testProject.dto.MemberUpdateDto;
-import com.example.testProject.dto.ResponseDto;
+import com.example.testProject.dto.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,6 +16,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.Map;
@@ -37,13 +37,17 @@ public class MemberController {
         return "join";
     }
 
-    @GetMapping("/my-page/{id}")
-    String home(Model model, @PathVariable Long id) {
-        ResponseDto responseDto = memberService.initMyPage(id);
+    @GetMapping("/my-page")
+    String home(Model model, HttpServletRequest httpServletRequest) {
+        ResponseDto responseDto = memberService.getSession(httpServletRequest);
+
+        if (responseDto == null) {
+            return "redirect:/login";
+        }
 
         model.addAttribute("url", responseDto.getImage());
         model.addAttribute("userId", responseDto.getUserId());
-        model.addAttribute("id", id);
+        model.addAttribute("id", responseDto.getId());
 
         return "my-page";
     }
@@ -68,15 +72,15 @@ public class MemberController {
 
             return "join";
         }
+        memberService.saveMember(memberJoinDto);
 
-        Member member = memberService.saveMember(memberJoinDto);
-
-        return "redirect:/my-page/" + member.getId();
+        return "redirect:/login";
     }
 
-    @GetMapping("/update/{id}")
-    String createUpdatePage(@PathVariable Long id, Model model) {
-        ResponseDto responseDto = memberService.initMyPage(id);
+    @GetMapping("/update")
+    String createUpdatePage(HttpServletRequest request, Model model) {
+        ResponseDto responseDto =  memberService.getSession(request);
+
         model.addAttribute("id", responseDto.getId());
         model.addAttribute("userId", responseDto.getUserId());
         return "update";
@@ -92,26 +96,51 @@ public class MemberController {
             for (String key : validatorResult.keySet()) {
                 model.addAttribute(key, validatorResult.get(key));
             }
-            return "join";
+            return "update";
         }
 
         memberService.updateMember(memberUpdateDto);
 
-        return "redirect:/my-page/" + memberUpdateDto.getId();
+        return "redirect:/my-page";
     }
 
     @PostMapping("/delete")
-    String delete(GetMemberIdDto getMemberIdDto) {
+    String delete(GetMemberIdDto getMemberIdDto,HttpServletRequest request) {
         memberService.deleteMember(getMemberIdDto);
+        memberService.logout(request);
         return "redirect:/";
     }
 
     @GetMapping("/member/list")
-    String memberListPage(Model model, @PageableDefault(size=2,page=0)Pageable pageable){
-        Page<ResponseDto> responseDtoList=   memberService.getMemberList(pageable);
-        model.addAttribute("memberInfo",responseDtoList.getContent());
-        model.addAttribute("paging",responseDtoList);
+    String memberListPage(Model model, @PageableDefault(size = 2, page = 0) Pageable pageable) {
+        Page<ResponseDto> responseDtoList = memberService.getMemberList(pageable);
+        model.addAttribute("memberInfo", responseDtoList.getContent());
+        model.addAttribute("paging", responseDtoList);
 
         return "list";
     }
+
+    @GetMapping("/login")
+    String loginPage() {
+        return "login";
+    }
+
+    @PostMapping("/login")
+    String login(Model model, LoginDto loginDto, HttpServletRequest httpServletRequest) {
+        if (!memberService.login(loginDto, httpServletRequest)) {
+            model.addAttribute("error", "입력하신 정보가 맞지 않습니다.");
+            return "login";
+        }
+
+        return "redirect:/my-page";
+    }
+
+    @GetMapping("/logout")
+    String logout(HttpServletRequest httpServletRequest) {
+
+        memberService.logout(httpServletRequest);
+
+        return "redirect:/";
+    }
+
 }

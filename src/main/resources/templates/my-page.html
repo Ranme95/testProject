@@ -14,15 +14,15 @@
 </head>
 <body>
 <header th:replace="~{fragments/header::test_header}"></header>
-<a th:href="@{'/update/'+${id}}">수정하기</a>
-<p th:text="${userId}"></p>
-
-<!--<a th:href="@{/update/(id=${id})}">수정하기</a>-->
-<img th:src="@{${url}}" style="width:500px; height:500px">
-<form th:action="@{/delete}" method="post">
-    <input type="hidden" name="id" th:value="${id}">
-    <button type="submit" class="btn btn-danger">삭제하기</button>
-</form>
+<div class="d-flex justify-content-center">
+    <a th:href="@{/update}">수정하기</a>
+    <p th:text="${userId}"></p>
+    <img th:src="@{${url}}" style="width:500px; height:500px">
+    <form th:action="@{/delete}" method="post">
+        <input type="hidden" name="id" th:value="${id}">
+        <button type="submit" class="btn btn-danger">삭제하기</button>
+    </form>
+</div>
 <footer th:replace="~{fragments/footer::test_footer}"></footer>
 </body>
 </html>
