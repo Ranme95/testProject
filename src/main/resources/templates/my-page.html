@@ -14,14 +14,22 @@
 </head>
 <body>
 <header th:replace="~{fragments/header::test_header}"></header>
-<div class="d-flex justify-content-center">
-    <a th:href="@{/update}">수정하기</a>
-    <p th:text="${userId}"></p>
-    <img th:src="@{${url}}" style="width:500px; height:500px">
-    <form th:action="@{/delete}" method="post">
-        <input type="hidden" name="id" th:value="${id}">
-        <button type="submit" class="btn btn-danger">삭제하기</button>
-    </form>
+<div class="d-flex justify-content-end">
+<div class="card" style="width: 18rem;">
+    <img th:src="@{${url}}" class="card-img-top">
+    <div class="card-body">
+        <h5 class="card-title">아이디</h5>
+        <p class="card-text" th:text="${userId}"></p>
+
+        <div class="d-flex justify-content-between">
+            <a th:href="@{/update}" class="btn btn-secondary">회원 정보 수정</a>
+        <form th:action="@{/delete}" method="post">
+            <input type="hidden" name="id" th:value="${id}">
+            <button type="submit" class="btn btn-danger">탈퇴하기</button>
+        </form>
+        </div>
+    </div>
+</div>
 </div>
 <footer th:replace="~{fragments/footer::test_footer}"></footer>
 </body>
