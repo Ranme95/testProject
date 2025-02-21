@@ -18,20 +18,26 @@
     <p th:text="${error}"></p>
 </div>
 <main class="form-signin d-flex justify-content-center">
-    <form th:action="@{/login}" th:method="post">
-        <h1 class="h3 mb-3 fw-normal">Login</h1>
+    <div>
+        <form th:action="@{/login}" th:method="post">
+            <h1 class="h3 mb-3 fw-normal">Login</h1>
 
-        <div class="form-floating">
-            <input type="text" class="form-control" id="floatingInput" placeholder="Id" name="userId">
-            <label for="floatingInput">Id</label>
-        </div>
-        <div class="form-floating">
-            <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="userPassword">
-            <label for="floatingPassword">Password</label>
-        </div>
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Login</button>
+            <div class="form-floating">
+                <input type="text" class="form-control" id="floatingInput" placeholder="Id" name="userId">
+                <label for="floatingInput">Id</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
+                       name="userPassword">
+                <label for="floatingPassword">Password</label>
+            </div>
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Login</button>
+
+        </form>
+        <a href="/oauth2/authorization/google" class="btn btn-outline-primary mt-5 w-100">구글 로그인</a>
         <p class="mt-5 mb-3 text-muted">© 2025</p>
-    </form>
+    </div>
+
 </main>
 </body>
 </html>

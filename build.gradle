@@ -36,6 +36,7 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'com.mysql:mysql-connector-j'
 	implementation 'org.springframework.security:spring-security-crypto:5.7.1' //비밀번호 엔코더 넣기위함
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
 tasks.named('test') {
