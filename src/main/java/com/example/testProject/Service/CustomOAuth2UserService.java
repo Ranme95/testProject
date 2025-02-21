@@ -56,10 +56,24 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .email(email)
                     .build();
 
+            MemberImage memberImage = MemberImage.builder()
+                    .uuid(UUID.randomUUID())
+                    .member(member)
+                    .imageName("null.png")
+                    .build();
+            member.setMemberImage(memberImage);
 
             memberRepository.save(member);
         } else {
             member = findMember.get();
+
+            MemberImage memberImage = MemberImage.builder()
+                    .uuid(UUID.randomUUID())
+                    .imageName("null.png")
+                    .member(member)
+                    .build();
+
+            member.setMemberImage(memberImage);
 
             memberRepository.save(member);
         }

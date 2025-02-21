@@ -94,16 +94,7 @@ public class MemberController {
 
 
     @PostMapping("/update")
-    String createUpdate(@Valid MemberUpdateDto memberUpdateDto, Errors errors, Model model) throws IOException {
-        if (errors.hasErrors()) {
-            model.addAttribute("userId", memberUpdateDto.getUserId());
-            Map<String, String> validatorResult = memberService.validateHandling(errors);
-
-            for (String key : validatorResult.keySet()) {
-                model.addAttribute(key, validatorResult.get(key));
-            }
-            return "update";
-        }
+    String createUpdate(MemberUpdateDto memberUpdateDto, Model model) throws IOException {
 
         memberService.updateMember(memberUpdateDto);
 

@@ -88,6 +88,7 @@ public class MemberService {
 
     public Member updateMember(MemberUpdateDto memberUpdateDto) throws IOException {
         Optional<Member> optionalTest = memberRepository.findById(memberUpdateDto.getId());
+
         if (optionalTest.isEmpty()) throw new RuntimeException("해당 유저를 찾을 수 없음");
 
         Member member = optionalTest.get();
@@ -97,13 +98,17 @@ public class MemberService {
 
         MemberImage memberImage = optionalTestImage.get();
 
-        String password = passwordEncoder.encode(member.getUserPassword());
+        String password = "";
 
+        if(member.getUserPassword() !=null){
+            password = passwordEncoder.encode(member.getUserPassword());
+
+        }
         if (memberUpdateDto.getUpdateImage().isEmpty()) {
             Member savedMember = Member.builder()
                     .id(memberUpdateDto.getId())
                     .memberImage(memberImage)
-                    .userId(memberUpdateDto.getUserId())
+                    .userId(member.getUserId())
                     .userPassword(password)
                     .build();
 
@@ -115,7 +120,7 @@ public class MemberService {
 
             Member savedMember = Member.builder()
                     .id(memberUpdateDto.getId())
-                    .userId(memberUpdateDto.getUserId())
+                    .userId(member.getUserId())
                     .userPassword(password)
                     .build();
 

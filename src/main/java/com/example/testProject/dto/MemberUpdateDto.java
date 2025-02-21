@@ -12,11 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class MemberUpdateDto {
 
-    @Pattern(regexp = "^[a-z]{1}[a-z0-9]{5,10}$"
-            ,message = "아이디는 영문자와 숫자조합으로 5~11자리여야합니다.")
-    @NotBlank(message = "아이디는 필수 정보입니다.")
-    private String userId;
-
     private Long id;
 
     private MultipartFile updateImage;
