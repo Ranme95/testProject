@@ -1,5 +1,6 @@
 package com.example.testProject.Entity;
 
+import com.example.testProject.Common.MemberRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,17 @@ public class Member {
 
     @Column
     private String userPassword;
+
+    @Enumerated(EnumType.STRING)
+    private MemberRole role;
+
+    private String provider;
+
+    private String providerId;
+
+    private String email;
+
+
 
 
 }
