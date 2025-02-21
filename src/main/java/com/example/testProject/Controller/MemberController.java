@@ -87,7 +87,6 @@ public class MemberController {
     @GetMapping("/update")
     String createUpdatePage(HttpServletRequest request, Model model) {
         ResponseDto responseDto = memberService.getSession(request);
-
         model.addAttribute("id", responseDto.getId());
         model.addAttribute("userId", responseDto.getUserId());
         return "update";
