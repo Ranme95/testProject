@@ -1,15 +1,21 @@
 package com.example.testProject.Controller;
 
 import com.example.testProject.Entity.Member;
+import com.example.testProject.OAuth2.CustomOauth2UserDetails;
+import com.example.testProject.OAuth2.GoogleUserDetails;
 import com.example.testProject.Service.MemberService;
 import com.example.testProject.dto.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
+import org.springframework.boot.autoconfigure.pulsar.PulsarProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -79,7 +85,7 @@ public class MemberController {
 
     @GetMapping("/update")
     String createUpdatePage(HttpServletRequest request, Model model) {
-        ResponseDto responseDto =  memberService.getSession(request);
+        ResponseDto responseDto = memberService.getSession(request);
 
         model.addAttribute("id", responseDto.getId());
         model.addAttribute("userId", responseDto.getUserId());
@@ -105,7 +111,7 @@ public class MemberController {
     }
 
     @PostMapping("/delete")
-    String delete(GetMemberIdDto getMemberIdDto,HttpServletRequest request) {
+    String delete(GetMemberIdDto getMemberIdDto, HttpServletRequest request) {
         memberService.deleteMember(getMemberIdDto);
         memberService.logout(request);
         return "redirect:/";
@@ -141,6 +147,13 @@ public class MemberController {
         memberService.logout(httpServletRequest);
 
         return "redirect:/";
+    }
+
+    @GetMapping("/oauth/login/info")
+    public String info(Model model,HttpServletRequest request) {
+        if(!memberService.getOAuthSession(request)) return "redirect:/login";
+        return "redirect:/my-page";
+
     }
 
 }
