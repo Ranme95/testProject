@@ -5,11 +5,12 @@ import com.example.testProject.Entity.MemberImage;
 import com.example.testProject.Handler.ImageHandler;
 import com.example.testProject.Repository.MemberImageRepository;
 import com.example.testProject.Repository.MemberRepository;
-import com.example.testProject.dto.GetMemberIdDto;
-import com.example.testProject.dto.ResponseDto;
-import com.example.testProject.dto.MemberJoinDto;
-import com.example.testProject.dto.MemberUpdateDto;
+import com.example.testProject.dto.*;
+import jakarta.security.auth.message.callback.SecretKeyCallback;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Request;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,9 +37,10 @@ public class MemberService {
 
     /**
      * 아이디 중복 체크
+     *
      * @return 존재하면 false, 존재하지 않으면 true
      */
-    public boolean checkId(String userId){
+    public boolean checkId(String userId) {
         Optional<Member> optionalMember = memberRepository.findByUserId(userId);
         return optionalMember.isEmpty();
     }
@@ -46,7 +48,7 @@ public class MemberService {
     public Member saveMember(MemberJoinDto memberJoinDto) throws IOException {
 
         UUID uuid = imageHandler.saveImage(memberJoinDto.getImage());
-        
+
         //비밀번호 암호화
         String password = passwordEncoder.encode(memberJoinDto.getUserPassword());
 
@@ -60,9 +62,9 @@ public class MemberService {
                 .uuid(uuid)
                 .imageName(memberJoinDto.getImage().getOriginalFilename())
                 .build();
-        
+
         member.setMemberImage(memberImage);
-        
+
         //cascade.ALL 설정이 되어있기때문에 memberImageRepository.save를 해주지 않아도 자동으로 저장됨
         return memberRepository.save(member);
 
@@ -82,6 +84,7 @@ public class MemberService {
 
     /**
      * 오류가 발생한 필드와, 그 필드 오류 메세지를 출력하기 위해 리스트에 추가
+     *
      * @return
      */
     public Map<String, String> validateHandling(Errors errors) {
@@ -148,9 +151,9 @@ public class MemberService {
         memberRepository.delete(member);
     }
 
-    public Page<ResponseDto> getMemberList(Pageable pageable){
-         Page<Member> memberList = memberRepository.findAll(pageable);
-        return memberList.map((member)->{
+    public Page<ResponseDto> getMemberList(Pageable pageable) {
+        Page<Member> memberList = memberRepository.findAll(pageable);
+        return memberList.map((member) -> {
             return ResponseDto.builder()
                     .id(member.getId())
                     .userId(member.getUserId())
@@ -159,4 +162,55 @@ public class MemberService {
                     .build();
         });
     }
+
+    public boolean login(LoginDto loginDto, HttpServletRequest request) {
+        String userId = loginDto.getUserId();
+        String userPassword = loginDto.getUserPassword();
+
+        //존재하지 않은 아이디면 false반환
+        Optional<Member> optionalMember = memberRepository.findByUserId(userId);
+
+        if (optionalMember.isEmpty()) return false;
+
+        Member member = optionalMember.get();
+
+        String savedPassword = member.getUserPassword();
+
+        //비밀번호가 일치할 때
+        if (passwordEncoder.matches(userPassword,savedPassword)) {
+            HttpSession session = request.getSession(true);
+            session.setAttribute("memberId", member.getId());
+            return true;
+        }
+        return false;
+    }
+
+    public ResponseDto getSession(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return null;
+        }
+        Long memberId = (Long) session.getAttribute("memberId");
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        if (optionalMember.isEmpty()) return null;
+        Member member = optionalMember.get();
+        String imagePath = imageHandler.getImagePath(member.getMemberImage().getUuid(), member.getMemberImage().getImageName());
+
+        return ResponseDto.builder()
+                .id(member.getId())
+                .userId(member.getUserId())
+                .image(imagePath)
+                .build();
+    }
+
+    public void logout(HttpServletRequest httpServletRequest){
+        HttpSession session = httpServletRequest.getSession(false);
+        if(session == null) throw new RuntimeException("로그인이 되지 않았습니다.");
+
+        //세션 무효화
+        session.invalidate();
+
+
+    }
+
 }
