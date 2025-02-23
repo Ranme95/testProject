@@ -204,4 +204,5 @@ public class MemberService {
         HttpSession session = request.getSession();
         return session != null;
     }
+
 }

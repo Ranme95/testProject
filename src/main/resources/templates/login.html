@@ -17,8 +17,12 @@
 <div>
     <p th:text="${error}"></p>
 </div>
+<div th:if="${param.error}" class="alert alert-secondary">
+    <p>아이디나 비밀번호가 잘못되었습니다.</p>
+</div>
 <main class="form-signin d-flex justify-content-center">
     <div>
+
         <form th:action="@{/login}" th:method="post">
             <h1 class="h3 mb-3 fw-normal">Login</h1>
 

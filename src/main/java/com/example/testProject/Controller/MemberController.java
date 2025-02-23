@@ -122,15 +122,15 @@ public class MemberController {
         return "login";
     }
 
-    @PostMapping("/login")
-    String login(Model model, LoginDto loginDto, HttpServletRequest httpServletRequest) {
-        if (!memberService.login(loginDto, httpServletRequest)) {
-            model.addAttribute("error", "입력하신 정보가 맞지 않습니다.");
-            return "login";
-        }
-
-        return "redirect:/my-page";
-    }
+//    @PostMapping("/login")
+//    String login(Model model, LoginDto loginDto, HttpServletRequest httpServletRequest) {
+//        if (!memberService.login(loginDto, httpServletRequest)) {
+//            model.addAttribute("error", "입력하신 정보가 맞지 않습니다.");
+//            return "login";
+//        }
+//
+//        return "redirect:/my-page";
+//    }
 
     @GetMapping("/logout")
     String logout(HttpServletRequest httpServletRequest) {
