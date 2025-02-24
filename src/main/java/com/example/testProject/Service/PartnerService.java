@@ -41,25 +41,4 @@ public class PartnerService {
         return true;
 
     }
-
-    public Boolean partnerLogin(PartnerDto partnerDto, HttpServletRequest request){
-        String id = partnerDto.getPartnerId();
-        String password = partnerDto.getPartnerPassword();
-
-        Optional<Partner> optionalPartner = partnerRepository.findByPartnerId(id);
-
-        if(optionalPartner.isEmpty()) return false;
-
-        Partner partner = optionalPartner.get();
-
-        if(passwordEncoder.matches(password,partner.getPartnerPassword())){
-
-            HttpSession session =request.getSession(true);
-            session.setAttribute("partnerId",partner.getId());
-
-            return true;
-        }
-        return false;
-
-    }
 }

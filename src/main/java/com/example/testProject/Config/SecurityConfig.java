@@ -38,7 +38,9 @@ public class SecurityConfig {
     @Order(1)
     protected SecurityFilterChain memberFilterChain(HttpSecurity http) throws Exception {
 
-        http.securityMatcher(new AntPathRequestMatcher("/"));
+        //요청한 url이 "/partner"로 시작안한다면 이 필터를 적용
+        http.securityMatcher(new NegatedRequestMatcher(new AntPathRequestMatcher("/partner/**")));
+
 
         //csrf 사용 안함
         http.csrf(AbstractHttpConfigurer::disable);
@@ -90,7 +92,8 @@ public class SecurityConfig {
     @Order(2)
     protected SecurityFilterChain partnerFilterChain(HttpSecurity http) throws Exception {
 
-        http.securityMatcher(new NegatedRequestMatcher(new AntPathRequestMatcher("/")));
+
+        http.securityMatcher(new AntPathRequestMatcher("/partner/**"));
 
         //csrf 사용 안함
         http.csrf(AbstractHttpConfigurer::disable);
@@ -100,7 +103,6 @@ public class SecurityConfig {
         //접근 권한 설정
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers( "/partner/**").hasRole(MemberRole.PARTNER.name())
-                .requestMatchers("/member/list").hasRole(MemberRole.ADMIN.name())
                 .anyRequest().permitAll()
         );
 
@@ -116,15 +118,6 @@ public class SecurityConfig {
                 .permitAll()
         );
 
-        //oauth 로그인
-        http.oauth2Login((auth) -> auth
-                .loginPage("/login")
-                .defaultSuccessUrl("/my-page")
-                .failureUrl("/login")
-                .authorizationEndpoint(authorization->authorization.baseUri("/oauth2/authorization"))
-                .permitAll()
-        );
-
         //로그아웃
         //필터가 세션 삭제해주므로 컨트롤러 따로 필요 X
         http.logout((auth)->auth
@@ -137,6 +130,7 @@ public class SecurityConfig {
 
     }
 
+    //멤버 로그인 시도
     @Bean
     DaoAuthenticationProvider memberDaoAuthenticationProvider(){
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
@@ -145,6 +139,7 @@ public class SecurityConfig {
         return daoAuthenticationProvider;
     }
 
+    //파트너 로그인 시도
     @Bean
     DaoAuthenticationProvider partnerDaoAuthenticationProvider(){
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();

@@ -55,27 +55,6 @@ public class PartnerController {
         return "partner/login";
     }
 
-    @PostMapping("/login")
-    String partnerLogin(@Valid PartnerDto partnerDto, Errors errors, Model model, HttpServletRequest request){
-        if(errors.hasErrors()){
-
-            Map<String,String> valid = authService.validateHandling(errors);
-
-            for (String key : valid.keySet()){
-                model.addAttribute(key,valid.get(key));
-            }
-
-            return "partner/login";
-        }
-
-        if(!partnerService.partnerLogin(partnerDto,request)){
-            model.addAttribute("error","아이디나 비밀번호가 맞지 않습니다.");
-            return "partner/login";
-        }
-
-        return "redirect:/partner/";
-    }
-
     @GetMapping("/")
     String partnerHome(){
         return "partner/home";
