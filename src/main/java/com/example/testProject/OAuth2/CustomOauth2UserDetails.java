@@ -67,7 +67,7 @@ public class CustomOauth2UserDetails implements UserDetails, OAuth2User {
         collection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return member.getRole().name();
+                return "ROLE_"+ member.getRole().name();
             }
         });
         return collection;

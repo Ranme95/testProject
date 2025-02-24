@@ -89,7 +89,10 @@ public class MemberService {
         return validatorResult;
     }
 
-    public Member updateMember(MemberUpdateDto memberUpdateDto) throws IOException {
+    /**
+     * 계정 업데이트
+     */
+    public void updateMember(MemberUpdateDto memberUpdateDto) throws IOException {
         Optional<Member> optionalTest = memberRepository.findById(memberUpdateDto.getId());
 
         if (optionalTest.isEmpty()) throw new RuntimeException("해당 유저를 찾을 수 없음");
@@ -101,17 +104,15 @@ public class MemberService {
 
         MemberImage memberImage = optionalTestImage.get();
 
-        String password = null;
+        String password = "";
 
+        // 계정비밀번호가 null이 아닐경우(즉, oauth로 로그인한 계정이 아닐경우)
         if (member.getUserPassword() != null) {
             password = passwordEncoder.encode(member.getUserPassword());
         }
 
-        if (memberUpdateDto.getUpdateImage().isEmpty()) {
-            return member;
-
-        } else {
-
+        // 이미지를 변경할 경우
+        if (!memberUpdateDto.getUpdateImage().isEmpty()) {
             UUID uuid = imageHandler.saveImage(memberUpdateDto.getUpdateImage());
 
             MemberImage savedMemberImage = MemberImage.builder()
@@ -123,8 +124,9 @@ public class MemberService {
 
             member.setMemberImage(savedMemberImage);
 
-            return memberRepository.save(member);
+            memberRepository.save(member);
         }
+
     }
 
     public void deleteMember(GetMemberIdDto getMemberIdDto) {
@@ -148,27 +150,6 @@ public class MemberService {
         });
     }
 
-    public boolean login(LoginDto loginDto, HttpServletRequest request) {
-        String userId = loginDto.getUserId();
-        String userPassword = loginDto.getUserPassword();
-
-        //존재하지 않은 아이디면 false반환
-        Optional<Member> optionalMember = memberRepository.findByUserId(userId);
-
-        if (optionalMember.isEmpty()) return false;
-
-        Member member = optionalMember.get();
-
-        String savedPassword = member.getUserPassword();
-
-        //비밀번호가 일치할 때
-        if (passwordEncoder.matches(userPassword, savedPassword)) {
-            HttpSession session = request.getSession(true);
-            session.setAttribute("memberId", member.getId());
-            return true;
-        }
-        return false;
-    }
 
     public ResponseDto getSession(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -192,16 +173,9 @@ public class MemberService {
                 .build();
     }
 
-    public void logout(HttpServletRequest httpServletRequest) {
-        HttpSession session = httpServletRequest.getSession(false);
-        if (session == null) throw new RuntimeException("로그인이 되지 않았습니다.");
-
-        //세션 무효화
-        session.invalidate();
-    }
-
     public Boolean getOAuthSession(HttpServletRequest request) {
         HttpSession session = request.getSession();
         return session != null;
     }
+
 }
