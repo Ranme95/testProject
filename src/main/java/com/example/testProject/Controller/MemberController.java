@@ -94,7 +94,7 @@ public class MemberController {
 
 
     @PostMapping("/update")
-    String createUpdate(MemberUpdateDto memberUpdateDto, Model model) throws IOException {
+    String createUpdate(MemberUpdateDto memberUpdateDto) throws IOException {
 
         memberService.updateMember(memberUpdateDto);
 
@@ -102,9 +102,8 @@ public class MemberController {
     }
 
     @PostMapping("/delete")
-    String delete(GetMemberIdDto getMemberIdDto, HttpServletRequest request) {
+    String delete(GetMemberIdDto getMemberIdDto) {
         memberService.deleteMember(getMemberIdDto);
-        memberService.logout(request);
         return "redirect:/";
     }
 
@@ -120,24 +119,6 @@ public class MemberController {
     @GetMapping("/login")
     String loginPage() {
         return "login";
-    }
-
-//    @PostMapping("/login")
-//    String login(Model model, LoginDto loginDto, HttpServletRequest httpServletRequest) {
-//        if (!memberService.login(loginDto, httpServletRequest)) {
-//            model.addAttribute("error", "입력하신 정보가 맞지 않습니다.");
-//            return "login";
-//        }
-//
-//        return "redirect:/my-page";
-//    }
-
-    @GetMapping("/logout")
-    String logout(HttpServletRequest httpServletRequest) {
-
-        memberService.logout(httpServletRequest);
-
-        return "redirect:/";
     }
 
     @GetMapping("/oauth/login/info")

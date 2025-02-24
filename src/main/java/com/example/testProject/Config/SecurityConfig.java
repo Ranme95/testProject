@@ -17,20 +17,20 @@ public class SecurityConfig {
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        //접근 권한 설정
-        //어떤 요청이든 접근 가능
-//        http.authorizeHttpRequests((auth)->auth.anyRequest().permitAll()
-//        );
 
-
+        
+        //csrf 사용 안함
         http.csrf(AbstractHttpConfigurer::disable);
 
 
+        //접근 권한 설정
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers( "/my-page","/update", "/delete", "/logout").hasRole(MemberRole.USER.name())
                 .anyRequest().permitAll()
         );
 
+        //폼 로그인
+        //필터가 login 처리하므로 컨트롤러 따로 필요 X
         http.formLogin((auth)->auth
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .permitAll()
         );
 
-
+        //oauth 로그인
         http.oauth2Login((auth) -> auth
                 .loginPage("/login")
                 .defaultSuccessUrl("/oauth/login/info")
@@ -49,15 +49,15 @@ public class SecurityConfig {
                 .permitAll()
         );
 
+        //로그아웃
+        //필터가 세션 삭제해주므로 컨트롤러 따로 필요 X
+        http.logout((auth)->auth
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+        );
+
 
         return http.build();
 
     }
-//
-//    @Bean
-//    public BCryptPasswordEncoder bCryptPasswordEncoder(){
-//
-//        return new BCryptPasswordEncoder();
-//    }
-
 }

@@ -148,27 +148,6 @@ public class MemberService {
         });
     }
 
-    public boolean login(LoginDto loginDto, HttpServletRequest request) {
-        String userId = loginDto.getUserId();
-        String userPassword = loginDto.getUserPassword();
-
-        //존재하지 않은 아이디면 false반환
-        Optional<Member> optionalMember = memberRepository.findByUserId(userId);
-
-        if (optionalMember.isEmpty()) return false;
-
-        Member member = optionalMember.get();
-
-        String savedPassword = member.getUserPassword();
-
-        //비밀번호가 일치할 때
-        if (passwordEncoder.matches(userPassword, savedPassword)) {
-            HttpSession session = request.getSession(true);
-            session.setAttribute("memberId", member.getId());
-            return true;
-        }
-        return false;
-    }
 
     public ResponseDto getSession(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -190,14 +169,6 @@ public class MemberService {
                 .userId(member.getUserId())
                 .image(imagePath)
                 .build();
-    }
-
-    public void logout(HttpServletRequest httpServletRequest) {
-        HttpSession session = httpServletRequest.getSession(false);
-        if (session == null) throw new RuntimeException("로그인이 되지 않았습니다.");
-
-        //세션 무효화
-        session.invalidate();
     }
 
     public Boolean getOAuthSession(HttpServletRequest request) {
