@@ -42,7 +42,7 @@ public class SecurityConfig {
         //oauth 로그인
         http.oauth2Login((auth) -> auth
                 .loginPage("/login")
-                .defaultSuccessUrl("/oauth/login/info")
+                .defaultSuccessUrl("/my-page")
                 .failureUrl("/login")
                 .permitAll()
         );

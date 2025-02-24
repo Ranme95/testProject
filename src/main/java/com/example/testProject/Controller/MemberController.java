@@ -32,17 +32,15 @@ public class MemberController {
     }
 
     @GetMapping("/join")
-    String testPage() {
+    String joinPage() {
         return "join";
     }
 
     @GetMapping("/my-page")
-    String home(Model model, HttpServletRequest httpServletRequest) {
+    String myPage(Model model, HttpServletRequest httpServletRequest) {
         ResponseDto responseDto = memberService.getSession(httpServletRequest);
 
-        if (responseDto == null) {
-            return "redirect:/login";
-        }
+        if (responseDto == null) {return "redirect:/login";}
 
         model.addAttribute("url", responseDto.getImage());
         model.addAttribute("userId", responseDto.getUserId());
@@ -52,7 +50,7 @@ public class MemberController {
     }
 
     @PostMapping("/join")
-    String test(@Valid MemberJoinDto memberJoinDto, Errors errors, Model model) throws IOException {
+    String join(@Valid MemberJoinDto memberJoinDto, Errors errors, Model model) throws IOException {
         model.addAttribute("userId", memberJoinDto.getUserId());
         //아이디가 중복되었을 때
         if (!memberService.checkId(memberJoinDto.getUserId())) {
@@ -76,17 +74,21 @@ public class MemberController {
         return "redirect:/login";
     }
 
+    @GetMapping("/login")
+    String loginPage() {
+        return "login";
+    }
+
     @GetMapping("/update")
-    String createUpdatePage(HttpServletRequest request, Model model) {
+    String updatePage(HttpServletRequest request, Model model) {
         ResponseDto responseDto = memberService.getSession(request);
         model.addAttribute("id", responseDto.getId());
         model.addAttribute("userId", responseDto.getUserId());
         return "update";
     }
 
-
     @PostMapping("/update")
-    String createUpdate(MemberUpdateDto memberUpdateDto) throws IOException {
+    String update(MemberUpdateDto memberUpdateDto) throws IOException {
 
         memberService.updateMember(memberUpdateDto);
 
@@ -107,17 +109,4 @@ public class MemberController {
 
         return "list";
     }
-
-    @GetMapping("/login")
-    String loginPage() {
-        return "login";
-    }
-
-    @GetMapping("/oauth/login/info")
-    public String info(Model model,HttpServletRequest request) {
-        if(!memberService.getOAuthSession(request)) return "redirect:/login";
-        return "redirect:/my-page";
-
-    }
-
 }

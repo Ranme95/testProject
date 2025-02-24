@@ -61,7 +61,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             member.setMemberImage(memberImage);
 
-
             memberRepository.save(member);
         } else {
             member = findMember.get();

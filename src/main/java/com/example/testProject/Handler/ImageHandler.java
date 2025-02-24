@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+//클래스를 스프링 빈으로 등록하는 어노테이션
+//스프링 컨테이너가 애플리케이션을 시작할 때 해당 클래스를 인스턴스화하고 관리
 @Component
 public class ImageHandler {
 

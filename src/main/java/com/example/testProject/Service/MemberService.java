@@ -7,7 +7,6 @@ import com.example.testProject.Handler.ImageHandler;
 import com.example.testProject.Repository.MemberImageRepository;
 import com.example.testProject.Repository.MemberRepository;
 import com.example.testProject.dto.*;
-import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +47,10 @@ public class MemberService {
         return optionalMember.isEmpty();
     }
 
-    public Member saveMember(MemberJoinDto memberJoinDto) throws IOException {
+    /**
+     * 가입 성공한 계정 저장
+     */
+    public void saveMember(MemberJoinDto memberJoinDto) throws IOException {
 
         UUID uuid = imageHandler.saveImage(memberJoinDto.getImage());
 
@@ -70,14 +72,12 @@ public class MemberService {
         member.setMemberImage(memberImage);
 
         //cascade.ALL 설정이 되어있기때문에 memberImageRepository.save를 해주지 않아도 자동으로 저장됨
-        return memberRepository.save(member);
+        memberRepository.save(member);
 
     }
 
     /**
      * 오류가 발생한 필드와, 그 필드 오류 메세지를 출력하기 위해 리스트에 추가
-     *
-     * @return
      */
     public Map<String, String> validateHandling(Errors errors) {
         Map<String, String> validatorResult = new HashMap<>();
@@ -94,7 +94,6 @@ public class MemberService {
      */
     public void updateMember(MemberUpdateDto memberUpdateDto) throws IOException {
         Optional<Member> optionalTest = memberRepository.findById(memberUpdateDto.getId());
-
         if (optionalTest.isEmpty()) throw new RuntimeException("해당 유저를 찾을 수 없음");
 
         Member member = optionalTest.get();
@@ -103,13 +102,6 @@ public class MemberService {
         if (optionalTestImage.isEmpty()) throw new RuntimeException("해당 이미지를 찾을 수 없음");
 
         MemberImage memberImage = optionalTestImage.get();
-
-        String password = "";
-
-        // 계정비밀번호가 null이 아닐경우(즉, oauth로 로그인한 계정이 아닐경우)
-        if (member.getUserPassword() != null) {
-            password = passwordEncoder.encode(member.getUserPassword());
-        }
 
         // 이미지를 변경할 경우
         if (!memberUpdateDto.getUpdateImage().isEmpty()) {
@@ -124,11 +116,15 @@ public class MemberService {
 
             member.setMemberImage(savedMemberImage);
 
+            //cascade.ALL 되어있어서 member만 저장해도 memberImage도 저장됨
             memberRepository.save(member);
         }
 
     }
 
+    /**
+     * 계정 삭제
+     */
     public void deleteMember(GetMemberIdDto getMemberIdDto) {
         Optional<Member> optionalTest = memberRepository.findById(getMemberIdDto.getId());
         if (optionalTest.isEmpty()) throw new RuntimeException("해당 유저를 찾을 수 없음");
@@ -138,6 +134,9 @@ public class MemberService {
         memberRepository.delete(member);
     }
 
+    /**
+     * 멤버 리스트
+     */
     public Page<ResponseDto> getMemberList(Pageable pageable) {
         Page<Member> memberList = memberRepository.findAll(pageable);
         return memberList.map((member) -> {
@@ -151,31 +150,34 @@ public class MemberService {
     }
 
 
+    /**
+     * 세션 가져오기
+     */
     public ResponseDto getSession(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session == null) {
-            return null;
-        }
+        //세션이 없는경우
+        if (session == null) {return null;}
+
         Long memberId = (Long) session.getAttribute("memberId");
         Optional<Member> optionalMember = memberRepository.findById(memberId);
+        //해당 회원이 없는 경우
         if (optionalMember.isEmpty()) return null;
+
         Member member = optionalMember.get();
 
+        MemberImage memberImage = member.getMemberImage();
+
         String imagePath = "";
+
         if (member.getMemberImage() != null) {
-            imagePath = imageHandler.getImagePath(member.getMemberImage().getUuid(), member.getMemberImage().getImageName());
+            imagePath = imageHandler.getImagePath(memberImage.getUuid(), memberImage.getImageName());
         }
 
         return ResponseDto.builder()
-                .id(member.getId())
+                 .id(member.getId())
                 .userId(member.getUserId())
                 .image(imagePath)
                 .build();
-    }
-
-    public Boolean getOAuthSession(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        return session != null;
     }
 
 }
