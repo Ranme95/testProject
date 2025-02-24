@@ -1,29 +1,21 @@
 package com.example.testProject.Controller;
 
-import com.example.testProject.Entity.Member;
-import com.example.testProject.OAuth2.CustomOauth2UserDetails;
-import com.example.testProject.OAuth2.GoogleUserDetails;
 import com.example.testProject.Service.MemberService;
-import com.example.testProject.dto.*;
+import com.example.testProject.dto.GetMemberIdDto;
+import com.example.testProject.dto.MemberJoinDto;
+import com.example.testProject.dto.MemberUpdateDto;
+import com.example.testProject.dto.ResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
-import org.springframework.boot.autoconfigure.pulsar.PulsarProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.Map;
