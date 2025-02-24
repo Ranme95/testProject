@@ -17,11 +17,8 @@ public class SecurityConfig {
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-
-        
         //csrf 사용 안함
         http.csrf(AbstractHttpConfigurer::disable);
-
 
         //접근 권한 설정
         http.authorizeHttpRequests((auth) -> auth
