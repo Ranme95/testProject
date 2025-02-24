@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .loginPage("/login")
                 .defaultSuccessUrl("/my-page")
                 .failureUrl("/login")
+                .authorizationEndpoint(authorization->authorization.baseUri("/oauth2/authorization"))
                 .permitAll()
         );
 

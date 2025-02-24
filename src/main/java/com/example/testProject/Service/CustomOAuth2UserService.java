@@ -6,6 +6,7 @@ import com.example.testProject.Entity.Member;
 import com.example.testProject.Entity.MemberImage;
 import com.example.testProject.OAuth2.CustomOauth2UserDetails;
 import com.example.testProject.OAuth2.GoogleUserDetails;
+import com.example.testProject.OAuth2.NaverUserDetails;
 import com.example.testProject.OAuth2.OAuth2UserInfo;
 import com.example.testProject.Repository.MemberImageRepository;
 import com.example.testProject.Repository.MemberRepository;
@@ -17,6 +18,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,6 +40,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if (provider.equals("google")) {
             oAuth2UserInfo = new GoogleUserDetails(oAuth2User.getAttributes());
+        }
+
+        else if(provider.equals("naver")){
+            oAuth2UserInfo = new NaverUserDetails(oAuth2User.getAttributes());
         }
 
         String providerId = oAuth2UserInfo.getProviderId();
