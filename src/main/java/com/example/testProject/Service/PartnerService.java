@@ -23,7 +23,12 @@ public class PartnerService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public void savePartner(PartnerDto partnerDto){
+    public boolean savePartner(PartnerDto partnerDto){
+
+        String id = partnerDto.getPartnerId();
+
+        //중복된 아이디인지 체크
+        if(partnerRepository.findByPartnerId(id).isPresent()) return false;
 
         Partner partner = Partner.builder()
                 .partnerId(partnerDto.getPartnerId())
@@ -33,6 +38,8 @@ public class PartnerService {
 
         partnerRepository.save(partner);
 
+        return true;
+
     }
 
     public Boolean partnerLogin(PartnerDto partnerDto, HttpServletRequest request){
@@ -41,7 +48,7 @@ public class PartnerService {
 
         Optional<Partner> optionalPartner = partnerRepository.findByPartnerId(id);
 
-        if(optionalPartner.isEmpty()) return false
+        if(optionalPartner.isEmpty()) return false;
 
         Partner partner = optionalPartner.get();
 

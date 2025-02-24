@@ -43,9 +43,11 @@ public class PartnerController {
             return "partner/join";
         }
 
-        partnerService.savePartner(partnerDto);
+        if(!partnerService.savePartner(partnerDto)){
+            model.addAttribute("duplicateId","중복된 아이디입니다.");
+        }
 
-        return "redirect:/partner/";
+        return "redirect:/partner/login";
     }
 
     @GetMapping("/login")
