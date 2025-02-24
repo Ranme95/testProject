@@ -1,9 +1,11 @@
-package com.example.testProject.OAuth2;
+package com.example.testProject.dto.custom;
+
+import com.example.testProject.OAuth2.OAuth2UserInfo;
 
 import java.util.Map;
 
 
-public class NaverUserDetails implements OAuth2UserInfo{
+public class NaverUserDetails implements OAuth2UserInfo {
     private Map<String,Object> attributes;
 
     public NaverUserDetails(Map<String,Object> attributes) {

@@ -1,24 +1,51 @@
 package com.example.testProject.Config;
 
 import com.example.testProject.Common.MemberRole;
+import com.example.testProject.Repository.MemberRepository;
+import com.example.testProject.Repository.PartnerRepository;
+import com.example.testProject.Service.CustomUserDetailsService;
+import com.example.testProject.Service.PartnerUserDetailsService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.CachingUserDetailsService;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final PartnerRepository partnerRepository;
+
+    private final HttpServletRequest request;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final MemberRepository memberRepository;
+
+
     @Bean
-    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    @Order(1)
+    protected SecurityFilterChain memberFilterChain(HttpSecurity http) throws Exception {
+
+        //요청한 url이 "/partner"로 시작안한다면 이 필터를 적용
+        http.securityMatcher(new NegatedRequestMatcher(new AntPathRequestMatcher("/partner/**")));
+
 
         //csrf 사용 안함
         http.csrf(AbstractHttpConfigurer::disable);
+
+        http.authenticationProvider(memberDaoAuthenticationProvider());
 
         //접근 권한 설정
         http.authorizeHttpRequests((auth) -> auth
@@ -48,6 +75,7 @@ public class SecurityConfig {
                 .permitAll()
         );
 
+
         //로그아웃
         //필터가 세션 삭제해주므로 컨트롤러 따로 필요 X
         http.logout((auth)->auth
@@ -58,5 +86,65 @@ public class SecurityConfig {
 
         return http.build();
 
+    }
+
+    @Bean
+    @Order(2)
+    protected SecurityFilterChain partnerFilterChain(HttpSecurity http) throws Exception {
+
+
+        http.securityMatcher(new AntPathRequestMatcher("/partner/**"));
+
+        //csrf 사용 안함
+        http.csrf(AbstractHttpConfigurer::disable);
+
+        http.authenticationProvider(partnerDaoAuthenticationProvider());
+
+        //접근 권한 설정
+        http.authorizeHttpRequests((auth) -> auth
+                .requestMatchers( "/partner/**").hasRole(MemberRole.PARTNER.name())
+                .anyRequest().permitAll()
+        );
+
+        //폼 로그인
+        //필터가 login 처리하므로 컨트롤러 따로 필요 X
+        http.formLogin((auth)->auth
+                .loginPage("/partner/login")
+                .loginProcessingUrl("/partner/login")
+                .failureUrl("/partner/login?error")
+                .usernameParameter("partnerId")
+                .passwordParameter("partnerPassword")
+                .defaultSuccessUrl("/partner/")
+                .permitAll()
+        );
+
+        //로그아웃
+        //필터가 세션 삭제해주므로 컨트롤러 따로 필요 X
+        http.logout((auth)->auth
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+        );
+
+
+        return http.build();
+
+    }
+
+    //멤버 로그인 시도
+    @Bean
+    DaoAuthenticationProvider memberDaoAuthenticationProvider(){
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(new CustomUserDetailsService(memberRepository,request));
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+        return daoAuthenticationProvider;
+    }
+
+    //파트너 로그인 시도
+    @Bean
+    DaoAuthenticationProvider partnerDaoAuthenticationProvider(){
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(new PartnerUserDetailsService(partnerRepository,request));
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+        return daoAuthenticationProvider;
     }
 }

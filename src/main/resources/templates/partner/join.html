@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>파트너 회원가입</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="container" style="width: 720px;">
+        <form th:action="@{/partner/join}" th:method="post" enctype="multipart/form-data">
+            <div class="mb-3 row">
+                <label for="partnerId" class="col-sm-2 col-form-label">아이디</label>
+                <div class="col">
+                    <input type="text" class="form-control" id="partnerId" name="partnerId" th:value="${partnerId}"
+                           required>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <span class="error" th:text="${valid_partnerId}"></span>
+                <span class="error" th:text="${duplicateId}"></span>
+            </div>
+            <div class="mb-3 row">
+                <label for="partnerPassword" class="col-sm-2 col-form-label">비밀번호</label>
+                <div class="col">
+                    <input type="password" class="form-control" id="partnerPassword" name="partnerPassword" required>
+                </div>
+                <label for="partnerPasswordCheck" class="col-sm-2 col-form-label">비밀번호확인</label>
+                <div class="col">
+                    <input type="password" class="form-control" id="partnerPasswordCheck" required>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <span class="error" style="display: none;" id="passwordError">비밀번호가 일치하지 않습니다.</span>
+            </div>
+            <div class="mb-3 row">
+                <span class="error" th:text="${valid_partnerPassword}"></span>
+            </div>
+            <div class="mb-3 row">
+                <button class="btn btn-success m-2" type="button" id="button">제출</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    let bol=0;
+let bol_id = 0;
+let bol_password=0;
+
+const id_check = /^[a-z]{1}[a-z0-9]{5,10}$/;
+const password_check = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
+
+let userId = document.getElementById("partnerId");
+let button = document.getElementById("button");
+let partnerPassword = document.getElementById("partnerPassword");
+let partnerPasswordCheck = document.getElementById("partnerPasswordCheck");
+let passwordError = document.getElementById("passwordError");
+
+function checkPassword(){
+    if(partnerPassword.value !== partnerPasswordCheck.value){
+        passwordError.style.display="block";
+    }
+    else{
+        passwordError.style.display="none";
+    }
+}
+
+partnerPassword.addEventListener("keydown",()=>{
+    checkPassword();
+})
+
+partnerPassword.addEventListener("keyup",()=>{
+    checkPassword();
+})
+
+partnerPasswordCheck.addEventListener("keydown",()=>{
+    checkPassword();
+})
+
+partnerPasswordCheck.addEventListener("keyup",()=>{
+    checkPassword();
+})
+
+
+button.addEventListener("click", () => {
+    if (id_check.test(partnerId.value)) {
+        bol_id = 1;
+
+    }
+    else {
+        bol_id = 0;
+        alert("아이디는 영소문자, 숫자조합으로 6~11자리여야 합니다.");
+    }
+
+    if(password_check.test(partnerPassword.value)){
+        bol_password=1;
+    }
+    else{
+        bol_password=0;
+        alert("비밀번호는 대소문자, 숫자, 특수문자 조합으로 8~15자리여야합니다.");
+    }
+
+    bol=bol_id+bol_password;
+
+    if (bol === 2) {
+        button.type = "submit";
+        button.onclick;
+    }
+    else {
+        alert("입력 정보가 올바르지 않습니다.");
+    }
+})
+</script>
+
+
+</body>
+
+</html>

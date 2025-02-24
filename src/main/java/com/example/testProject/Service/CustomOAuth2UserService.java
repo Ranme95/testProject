@@ -4,11 +4,10 @@ package com.example.testProject.Service;
 import com.example.testProject.Common.MemberRole;
 import com.example.testProject.Entity.Member;
 import com.example.testProject.Entity.MemberImage;
-import com.example.testProject.OAuth2.CustomOauth2UserDetails;
-import com.example.testProject.OAuth2.GoogleUserDetails;
-import com.example.testProject.OAuth2.NaverUserDetails;
+import com.example.testProject.dto.custom.CustomOauth2UserDetails;
+import com.example.testProject.dto.custom.GoogleUserDetails;
+import com.example.testProject.dto.custom.NaverUserDetails;
 import com.example.testProject.OAuth2.OAuth2UserInfo;
-import com.example.testProject.Repository.MemberImageRepository;
 import com.example.testProject.Repository.MemberRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +17,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

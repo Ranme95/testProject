@@ -1,5 +1,6 @@
 package com.example.testProject.Controller;
 
+import com.example.testProject.Service.AuthService;
 import com.example.testProject.Service.MemberService;
 import com.example.testProject.dto.GetMemberIdDto;
 import com.example.testProject.dto.MemberJoinDto;
@@ -25,6 +26,8 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
+
+    private final AuthService authService;
 
     @GetMapping("/")
     String homePage() {
@@ -61,7 +64,7 @@ public class MemberController {
 
         if (errors.hasErrors()) {
 
-            Map<String, String> validatorResult = memberService.validateHandling(errors);
+            Map<String, String> validatorResult = authService.validateHandling(errors);
 
             for (String key : validatorResult.keySet()) {
                 model.addAttribute(key, validatorResult.get(key));
