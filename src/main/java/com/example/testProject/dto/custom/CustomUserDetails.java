@@ -1,4 +1,4 @@
-package com.example.testProject.OAuth2;
+package com.example.testProject.dto.custom;
 
 import com.example.testProject.Entity.Member;
 import org.springframework.security.core.GrantedAuthority;

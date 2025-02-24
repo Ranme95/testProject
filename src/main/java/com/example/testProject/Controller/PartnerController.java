@@ -2,7 +2,8 @@ package com.example.testProject.Controller;
 
 import com.example.testProject.Service.AuthService;
 import com.example.testProject.Service.PartnerService;
-import com.example.testProject.dto.PartnerJoinDto;
+import com.example.testProject.dto.PartnerDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -29,9 +30,9 @@ public class PartnerController {
     }
 
     @PostMapping("/join")
-    String partnerJoin(@Valid PartnerJoinDto partnerJoinDto, Errors errors, Model model){
+    String partnerJoin(@Valid PartnerDto partnerDto, Errors errors, Model model){
         if(errors.hasErrors()){
-            model.addAttribute("partnerId",partnerJoinDto.getPartnerId());
+            model.addAttribute("partnerId", partnerDto.getPartnerId());
 
             Map<String,String> valid = authService.validateHandling(errors);
 
@@ -42,7 +43,33 @@ public class PartnerController {
             return "partner/join";
         }
 
-        partnerService.savePartner(partnerJoinDto);
+        partnerService.savePartner(partnerDto);
+
+        return "redirect:/partner/";
+    }
+
+    @GetMapping("/login")
+    String partnerLoginPage(){
+        return "partner/login";
+    }
+
+    @PostMapping("/login")
+    String partnerLogin(@Valid PartnerDto partnerDto, Errors errors, Model model, HttpServletRequest request){
+        if(errors.hasErrors()){
+
+            Map<String,String> valid = authService.validateHandling(errors);
+
+            for (String key : valid.keySet()){
+                model.addAttribute(key,valid.get(key));
+            }
+
+            return "partner/login";
+        }
+
+        if(!partnerService.partnerLogin(partnerDto,request)){
+            model.addAttribute("error","아이디나 비밀번호가 맞지 않습니다.");
+            return "partner/login";
+        }
 
         return "redirect:/partner/";
     }
@@ -51,6 +78,5 @@ public class PartnerController {
     String partnerHome(){
         return "partner/home";
     }
-
 
 }

@@ -1,7 +1,7 @@
 package com.example.testProject.Service;
 
 import com.example.testProject.Entity.Member;
-import com.example.testProject.OAuth2.CustomUserDetails;
+import com.example.testProject.dto.custom.CustomUserDetails;
 import com.example.testProject.Repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;

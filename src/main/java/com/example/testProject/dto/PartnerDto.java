@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PartnerJoinDto {
+public class PartnerDto {
 
     @Pattern(regexp = "^[a-z]{1}[a-z0-9]{5,10}$"
             ,message = "아이디는 영문자와 숫자조합으로 5~11자리여야합니다.")

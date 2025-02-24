@@ -22,7 +22,7 @@ public class SecurityConfig {
 
         //접근 권한 설정
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers( "/my-page","/update", "/delete", "/logout").hasAnyRole(MemberRole.USER.name(),MemberRole.ADMIN.name())
+                .requestMatchers( "/my-page","/update", "/delete", "/logout").hasAnyRole(MemberRole.USER.name(),MemberRole.ADMIN.name(),MemberRole.PARTNER.name())
                 .requestMatchers("/member/list").hasRole(MemberRole.ADMIN.name())
                 .anyRequest().permitAll()
         );
@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .authorizationEndpoint(authorization->authorization.baseUri("/oauth2/authorization"))
                 .permitAll()
         );
+
 
         //로그아웃
         //필터가 세션 삭제해주므로 컨트롤러 따로 필요 X
